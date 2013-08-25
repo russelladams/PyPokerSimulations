@@ -8,7 +8,7 @@ It's in its beginning stages, and there are some flaws that still need to be wor
 it's fairly decent at calculating hand equities. 
 
 #########################################
-# PyPokerSimulations                    #
-# contact: russell.adams2014@gmail.com  #
+* PyPokerSimulations                    #
+* contact: russell.adams2014@gmail.com  #
 @author Russell J. Adams                #
 #########################################
