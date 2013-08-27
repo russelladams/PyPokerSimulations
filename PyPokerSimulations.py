@@ -25,7 +25,7 @@ def combin(n,k):
 def createdeck():
     '''Create a list of all 52 cards in a single deck'''
     deck = []    
-    values = [1,2,3,4,5,6,7,8,9,10,11,12,13]
+    values = [2,3,4,5,6,7,8,9,10,11,12,13,14]
     suits = ['s','c','h','d']        
     for value in values:
         for suit in suits:
@@ -124,3 +124,8 @@ def equityVsrandom(card1,card2,simulations=30000):
     print("One is winning ",float(one/total))
     print("Two is winning ",float(two/total))
     print("And they are tying ",float(tie/total))
+        
+#cProfile.run("equityVsrandom((1,'c'),(1,'s'))")    
+#cProfile.run("equity((1,'c'),(1,'s'),(13,'c'),(12,'s'),50000)")
+#equityVsrandom((1,'c'),(1,'s'))
+#equity((14,'c'),(14,'s'),(13,'c'),(13,'s'),40000)
