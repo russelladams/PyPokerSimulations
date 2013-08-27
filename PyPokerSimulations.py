@@ -9,6 +9,8 @@ Created on Fri Aug 23 05:17:40 2013               #
 
 
 """
+import cProfile
+
 import random
 from math import factorial
 from itertools import combinations
@@ -34,18 +36,17 @@ def createboards(card1,card2,card3,card4,flop1=(None,None),flop2=(None,None),flo
     '''Returns all possible 5 card boards for 2-4 hole cards. You can also
        specify a flop, and instead create all possible turn/river cards.'''
     deck = createdeck()
-    x = list(deck)
     # Remove the four specified cards from the deck.
-    x.remove(card1)
-    x.remove(card2)
-    x.remove(card3)
-    x.remove(card4)
+    deck.remove(card1)
+    deck.remove(card2)
+    deck.remove(card3)
+    deck.remove(card4)
     # Check to see if a flop was specified. If so, remove those 3 from the deck.
     if flop1 != (None,None):
-        x.remove(flop1)
-        x.remove(flop2)
-        x.remove(flop3)
-        c = list(combinations(x,2))
+        deck.remove(flop1)
+        deck.remove(flop2)
+        deck.remove(flop3)
+        c = list(combinations(deck,2))
         boards = {}
         for j in range(len(c)):
             boards[j] = c[j]
@@ -53,7 +54,7 @@ def createboards(card1,card2,card3,card4,flop1=(None,None),flop2=(None,None),flo
     # Using itertools.combinations we create all 5 card combinations from
     # the remaining cards in the deck. Then place each of those
     # combinations into a dictionary for quick lookup.        
-    c = list(combinations(x,5))
+    c = list(combinations(deck,5))
     boards = {}
     for j in range(len(c)):
         boards[j] =c[j]
