@@ -147,7 +147,5 @@ def equityVsrandom(card1,card2,flop=None,simulations=10000):
 if __name__ == '__main__':      
     #cProfile.run("equityVsrandom((14,'c'),(14,'s'))")    
     #cProfile.run("equity((14,'c'),(14,'s'),(13,'c'),(12,'s'),10000)")
-    #equityVsrandom((14,'c'),(14,'s'))
-    print equityVsrandom((3,'c'),(4,'s'),flop=((9,'c'),(7,'d'),(10,'c')))
-
-    
+    #print equityVsrandom((14,'c'),(14,'s'),flop=None,simulations=50000)
+    print equity((14,'c'),(14,'s'),(13,'c'),(12,'d'))
