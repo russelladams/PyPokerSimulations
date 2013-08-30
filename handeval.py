@@ -61,16 +61,11 @@ Kind, Two Pair, Pair, High Card.'''
     cardsCopy = cards.copy()
     for key,value in cards.iteritems():
         if len(value) == 4:
-            if key == 1:
-                best_hand.append(14)
-                del cardsCopy[1]
-            else:
-                best_hand.append(key)
-                del cardsCopy[key]
+            best_hand.append(key)
+            del cardsCopy[key]
             for key,value in cardsCopy.iteritems():
                 temp.append(key)
-            best_hand.append(max(temp))
-            
+            best_hand.append(max(temp))    
             return "Four of a Kind",8,best_hand
     # Fullhouse
     # Iterates over each key in the cards dictionary.
@@ -82,19 +77,13 @@ Kind, Two Pair, Pair, High Card.'''
     x = cards.copy()
     for key,value in cards.iteritems():
         if len(value) == 3:
-            if key == 1:
-                for i in value:
-                    best_hand.append((14,i))
             for i in value:
                 best_hand.append((key,i))
             del x[key]
             for key2,value2 in x.iteritems():
                 if len(value2) >= 2:
-                    if key2 == 1:
-                        for i in value2:
-                            best_hand.append((14,i))
                     for j in value2:
-                        best_hand.append((key2,value2))
+                        best_hand.append((key2,j))
                     return "Fullhouse",7,best_hand
     # Flush
     # Iterates over each key value in the cards dictionary.
@@ -218,9 +207,6 @@ def evaluate(card1,card2,card3,card4,board):
     # We didn't get off easy, now to compare similar hands.
     # Starting with One Pair vs One Pair. The most common I'd assume.
     if (Hand1[0] == "High Card"):
-        if (Hand1[2][0] == 1) and (Hand2[2][0] == 1):
-            del(Hand1[2][0])
-            del(Hand2[2][0])
         if max(Hand1[2]) > max(Hand2[2]):
             return 1
         if max(Hand1[2]) < max(Hand2[2]):
@@ -239,8 +225,6 @@ def evaluate(card1,card2,card3,card4,board):
                 return 1
             if max(Hand2[2]) > max(Hand1[2]):
                 return 2
-        else:
-            print("tie at one pair")
     # Now checking two pair combinations to see which is better.
     if (Hand1[0] == "Two Pair"):
         hand_1 = []
@@ -265,10 +249,14 @@ def evaluate(card1,card2,card3,card4,board):
             return 1
         if (Hand1[2][0] < Hand2[2][0]):
             return 2
+        if max(Hand1[2]) > max(Hand2[2]):
+            return 1
+        if max(Hand2[2]) > max(Hand1[2]):
+            return 2
         else:
             return 0
     
-    # Checking for Flushes
+    # Need to do one for Flushes
     if (Hand1[0] == "Flush"):
         if max(Hand1[2]) > max(Hand2[2]):
             return 1
@@ -277,7 +265,7 @@ def evaluate(card1,card2,card3,card4,board):
         else:
             return 0
     
-    # Checking for Straights
+    # Need to do one for Straights
     if (Hand1[0] == "Straight"):
         if (Hand1[2][4] > Hand2[2][4]):
             return 1
@@ -285,25 +273,40 @@ def evaluate(card1,card2,card3,card4,board):
             return 2
         else:
             return 0
-  
+    
     # Now checking Fullhouses
     if (Hand1[0] == "Fullhouse"):
-        if (Hand1[2][2][0] == 1) and (Hand2[2][2] == 1):
+        if (len(Hand1[2]) == 5) and (len(Hand2[2]) == 5):
+            if (Hand1[2][0] > Hand2[2][0]):
+                return 1
+            if (Hand1[2][0] < Hand2[2][0]):
+                return 2
             if (Hand1[2][3] > Hand2[2][3]):
                 return 1
             if (Hand1[2][3] < Hand2[2][3]):
                 return 2
-        if (Hand1[2][2] == 1):
-            return 1
-        if (Hand2[2][2] == 1):
-            return 2
-        if (Hand1[2] > Hand2[2]):
-            return 1
-        if (Hand1[2] < Hand2[2]):
-            return 2
+        if len(Hand1[2]) == 5:
+            if (Hand1[2][0]) > max(Hand2[2]):
+                return 1
+            if (Hand1[2][0]) < max(Hand2[2]):
+                return 2
+            else:
+                return 0
+        if len(Hand2[2]) == 5:
+            if (Hand2[2][0]) > max(Hand1[2]):
+                return 2
+            if (Hand2[2][0]) < max(Hand1[2]):
+                return 1
+            else:
+                return 0
+        if (len(Hand2[2]) == 6) and (len(Hand1[2]) == 6):
+            if max(Hand1[2]) > max(Hand2[2]):
+                return 1
+            if max(Hand2[2]) > max(Hand1[2]):
+                return 2
         else:
-            return 0
-            
+            print("wtf")
+                
     # Now checking Four of a Kinds
     if (Hand1[0] == "Four of a Kind"):
         if (Hand1[2][0] == Hand2[2][0]):
