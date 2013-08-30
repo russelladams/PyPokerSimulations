@@ -9,27 +9,30 @@ Created on Fri Aug 23 05:17:40 2013 #
 
 """
 
-import cProfile
+#import cProfile
 from collections import deque
 
-def handtype(card1,card2,flop1=(-12,"a"),flop2=(-22,"b"),
-             flop3=(-32,"z"),turn=(-42,"d"),river=(-52,"e")):
+def handtype(card1,card2,board):
     '''Returns the hand type of the given hand. Royal Flush, Straight
 Flush, Four of a Kind, Fullhouse, Flush, Straight, Three of a
 Kind, Two Pair, Pair, High Card.'''
     # Putting each card (Value, Suit) into a list.
-    temp = [card1,card2,flop1,flop2,flop3,turn,river]
+    temp = deque()
+    temp.append(card1)
+    temp.append(card2)
+    for card in board:
+        temp.append(card)
     # Adds, each card(by value) to the cards dictionary. If the
     # card is already in the dictionary, it instead appends the suit
     # to the existing key value of the dictionary.
     best_hand = deque()
     cards = {}
     for card in temp:
-        if card[0] > 0:
-            if card[0] in cards:
-                cards[card[0]].append(card[1])
-            else:
-                cards[card[0]] = [card[1]]
+        try:
+            cards[card[0]].append(card[1])
+        except KeyError:
+            cards[card[0]] = [card[1]]
+        
     # Royal Flush
     # Checks if 10,J,Q,K,A are in the cards dictionary.
     # Then checks to see if their suits all match.
@@ -54,8 +57,7 @@ Kind, Two Pair, Pair, High Card.'''
     # Then checks to see if the key value's length is 4.
     # i.e dict = {7:'s','c','h','d'}
     # len(dict[7]) = 4
-    best_hand.clear()
-    tmp = []
+    temp.clear()
     cardsCopy = cards.copy()
     for key,value in cards.iteritems():
         if len(value) == 4:
@@ -66,8 +68,8 @@ Kind, Two Pair, Pair, High Card.'''
                 best_hand.append(key)
                 del cardsCopy[key]
             for key,value in cardsCopy.iteritems():
-                tmp.append(key)
-            best_hand.append(max(tmp))
+                temp.append(key)
+            best_hand.append(max(temp))
             
             return "Four of a Kind",8,best_hand
     # Fullhouse
@@ -139,21 +141,21 @@ Kind, Two Pair, Pair, High Card.'''
     # Iterates over each key value in the cards dictionary.
     # If the length of any value is 3, it returns Three of a Kind.
     best_hand.clear()
-    temp = []
+    tmp = []
     cardsCopy = cards.copy()
     for key,value in cards.iteritems():
         if len(value) == 3:
             best_hand.append(key)
             del cardsCopy[key]
             for key2,value2 in cardsCopy.iteritems():
-                temp.append(key2)
-            temp.sort()
-            best_hand.append(temp[-1])
-            best_hand.append(temp[-2])
-            return "Three of a Kind",5,best_hand
+                tmp.append(key2)
+            tmp.sort()
+            best_hand.append(tmp[-1])
+            best_hand.append(tmp[-2])
+            return "Three of a Kind",4,best_hand
     # Two Pair
     best_hand.clear()
-    temp = []
+    temp.clear()
     cardsCopy = cards.copy()
     for key, value in cards.iteritems():
         if len(value) == 2:
@@ -161,12 +163,12 @@ Kind, Two Pair, Pair, High Card.'''
             del cardsCopy[key]
     if len(best_hand) >= 2:
         for key in cardsCopy.iterkeys():
-            tmp.append(key)
-        best_hand.append(tmp[-1])
+            temp.append(key)
+        best_hand.append(temp[-1])
         return "Two Pair",3,best_hand
     # Pair
     best_hand.clear()
-    temp = []
+    temp.clear()
     cardsCopy = cards.copy()
     for key,value in cards.iteritems():
         if len(value) == 2:
@@ -205,13 +207,9 @@ def evaluate(card1,card2,card3,card4,board):
     '''Evaluate one hand vs another.'''
     # Create flops for the hands and put them in a list
     # The first hand is (c1,s1),(c2,s2) = (card one,suit one),(card two, suit two)
-    test1 = [card1,card2]
-    test2 = [card3,card4]
-    for x in board:
-        test1.append(x)
-        test2.append(x)
-    Hand1 = handtype(test1[0],test1[1],test1[2],test1[3],test1[4],test1[5],test1[6])
-    Hand2 = handtype(test2[0],test2[1],test2[2],test2[3],test2[4],test2[5],test2[6])
+
+    Hand1 = handtype(card1,card2,board)
+    Hand2 = handtype(card3,card4,board)
     # First Check to see if we can get off easy. i.e Fullhouse vs One Pair
     if (Hand1[1] > Hand2[1]):
         return 1
@@ -228,17 +226,11 @@ def evaluate(card1,card2,card3,card4,board):
         if max(Hand1[2]) < max(Hand2[2]):
             return 2
         else:
-            print("high card")
-            print Hand1[2], '-->',Hand2[2]
-            print test1, '-->',test2
             return 0
     if (Hand1[0] == "One Pair"):
         if Hand1[2][0] > Hand2[2][0]:
             return 1
         if Hand2[2][0] > Hand1[2][0]:
-            print("Hand 2!")
-            print Hand1[2]
-            print Hand2[2]
             return 2
         if Hand1[2][0] == Hand2[2][0]:
             del Hand1[2][0]
@@ -276,7 +268,7 @@ def evaluate(card1,card2,card3,card4,board):
         else:
             return 0
     
-    # Need to do one for Flushes
+    # Checking for Flushes
     if (Hand1[0] == "Flush"):
         if max(Hand1[2]) > max(Hand2[2]):
             return 1
@@ -285,7 +277,7 @@ def evaluate(card1,card2,card3,card4,board):
         else:
             return 0
     
-    # Need to do one for Straights
+    # Checking for Straights
     if (Hand1[0] == "Straight"):
         if (Hand1[2][4] > Hand2[2][4]):
             return 1
@@ -293,7 +285,7 @@ def evaluate(card1,card2,card3,card4,board):
             return 2
         else:
             return 0
-    
+  
     # Now checking Fullhouses
     if (Hand1[0] == "Fullhouse"):
         if (Hand1[2][2][0] == 1) and (Hand2[2][2] == 1):
@@ -311,6 +303,7 @@ def evaluate(card1,card2,card3,card4,board):
             return 2
         else:
             return 0
+            
     # Now checking Four of a Kinds
     if (Hand1[0] == "Four of a Kind"):
         if (Hand1[2][0] == Hand2[2][0]):
