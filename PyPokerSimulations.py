@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 ###################################################
 Created on Fri Aug 23 05:17:40 2013               #
@@ -11,7 +12,7 @@ Created on Fri Aug 23 05:17:40 2013               #
 #import cProfile
 
 import random
-from math import factorial
+from math import factorial,pi
 from itertools import combinations
 from handeval import evaluate
 
@@ -55,7 +56,7 @@ def createboards(card1,card2,card3=None,card4=None,flop1=(None,None),flop2=(None
     # Using itertools.combinations we create all 5 card combinations from
     # the remaining cards in the deck. Then place each of those
     # combinations into a dictionary for quick lookup.        
-    c = list(combinations(deck,5))
+    c = list(combinations(deck,3))
     boards = {}
     for j in range(len(c)):
         boards[j] =c[j]
@@ -76,7 +77,7 @@ def randomrange(card1,card2,flop=None):
         hands[i] = c[i]
     return hands
 
-def equity(card1,card2,card3,card4,simulations=70000):
+def equity(card1,card2,card3,card4,simulations=1000000):
     '''Equates the equity of one specified hand,
        versus another specified hand. Monte Carlo style.'''
     one = 0.0
@@ -142,10 +143,3 @@ def equityVsrandom(card1,card2,flop=None,simulations=10000):
     total = one+two+tie
     results = (one/total*100),(two/total*100),(tie/total*100)
     return results
-    
-
-if __name__ == '__main__':      
-    #cProfile.run("equityVsrandom((14,'c'),(14,'s'))")    
-    #cProfile.run("equity((14,'c'),(14,'s'),(13,'c'),(12,'s'),10000)")
-    #print equityVsrandom((14,'c'),(14,'s'),flop=None,simulations=50000)
-    print equity((14,'c'),(14,'s'),(13,'c'),(12,'d'))
