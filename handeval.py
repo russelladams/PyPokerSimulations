@@ -1,12 +1,8 @@
+# -*- coding: utf-8 -*-
 """
-###################################################
-Created on Fri Aug 23 05:17:40 2013 #
-@PyPokerSimulations #
-@author: Russell J. Adams #
-@email: russell.adams2014@gmail.com #
-###################################################
+Created on Mon Aug 26 13:44:42 2013
 
-
+@author: russelladams
 """
 
 #import cProfile
@@ -37,21 +33,18 @@ Kind, Two Pair, Pair, High Card.'''
     # Checks if 10,J,Q,K,A are in the cards dictionary.
     # Then checks to see if their suits all match.
     hand_type = None
-    if (14 in cards) & (10 in cards) & (11 in cards)& (12 in cards) & (13 in cards):
-        if (cards[14]==cards[10]) & (cards[14]==cards[11]) & (cards[14]==cards[12]) & (cards[14]==cards[13]):
+    if (14 in cards) and (10 in cards) and (11 in cards)and (12 in cards) and (13 in cards):
+        if (cards[14]==cards[10]) and (cards[14]==cards[11]) and (cards[14]==cards[12]) and (cards[14]==cards[13]):
             return "Royal Flush",10,best_hand
-        else:
-            hand_type = "Straight"
     # Straight Flush
     # Iterates over each key in cards dictionary. And checks to
     # see if each key value from +1 to +4 exists after that key.
     # Then checks to see if their suits all match
     for key,value in cards.iteritems():
-        if (key+1 in cards) & (key+2 in cards) & (key+3 in cards) & (key+4 in cards):
-            if (cards[key]==cards[key+1]) & (cards[key]==cards[key+2]) & (cards[key]==cards[key+3]) & (cards[key]==cards[key+4]):
+        if (key+1 in cards) and (key+2 in cards) and (key+3 in cards) and (key+4 in cards):
+            if (cards[key]==cards[key+1]) and (cards[key]==cards[key+2]) and (cards[key]==cards[key+3]) and (cards[key]==cards[key+4]):
                 return "Straight Flush",9,best_hand
-            else:
-                hand_type = "Straight"
+
     # Four of a kind
     # Iterates over each key in the cards dictionary.
     # Then checks to see if the key value's length is 4.
@@ -126,6 +119,15 @@ Kind, Two Pair, Pair, High Card.'''
                 if i == 'h':
                     best_hand.append(key)
         return "Flush",6, best_hand
+    # Straight
+    best_hand.clear()
+    for key,value in cards.iteritems():
+        if (key+1 in cards) and (key+2 in cards) and (key+3 in cards) and (key+4 in cards):
+            best_hand.append(key+4)
+            return "Straight",5,best_hand
+        if (14 in cards) and (13 in cards) and (12 in cards) and (11 in cards) and (10 in cards):
+            best_hand.append(14)
+            return "Straight",5,best_hand
     # Three of a kind
     # Iterates over each key value in the cards dictionary.
     # If the length of any value is 3, it returns Three of a Kind.
@@ -267,9 +269,9 @@ def evaluate(card1,card2,card3,card4,board):
     
     # Need to do one for Straights
     if (Hand1[0] == "Straight"):
-        if (Hand1[2][4] > Hand2[2][4]):
+        if (Hand1[2] > Hand2[2]):
             return 1
-        if (Hand1[2][4] < Hand2[2][4]):
+        if (Hand1[2] < Hand2[2]):
             return 2
         else:
             return 0
